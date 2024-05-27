@@ -1,3 +1,3 @@
 # PlagiarismHunter (tool for plagiarism detector)
 
-About the dataset
+Fase 1.
