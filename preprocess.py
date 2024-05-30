@@ -53,6 +53,6 @@ def preprocess_dataset(base_path, output_dir):
             print(f"Error procesando {java_file}: {e}")
 
 if __name__ == "__main__":
-    base_path = '/mnt/data/ConPlag/versions/bplag_version_1/'
-    output_dir = '/mnt/data/ConPlag/preprocessed_ast/'
+    base_path = './Versions/version 2'
+    output_dir = './Preprocessed_files/'
     preprocess_dataset(base_path, output_dir)
