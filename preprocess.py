@@ -1,20 +1,58 @@
+import os
+import json
 import javalang
 
-def parse_java_code(code):
-    try:
-        tree = javalang.parse.parse(code)
-        return tree
-    except javalang.parser.JavaSyntaxError as e:
-        print("JavaSyntaxError: ", e)
-        return None
+def collect_java_files(base_path):
+    """Recopila todos los archivos Java en el directorio base y sus subdirectorios."""
+    java_files = []
+    for root, _, files in os.walk(base_path):
+        for file in files:
+            if file.endswith(".java"):
+                java_files.append(os.path.join(root, file))
+    return java_files
 
-# Get java code from directory
-def get_java_code():
-    with open('test.java', 'r') as file:
-        code = file.read()
-    return code
+def generate_ast(java_file_path):
+    """Genera un Árbol de Sintaxis Abstracta (AST) a partir de un archivo Java."""
+    with open(java_file_path, 'r') as file:
+        java_code = file.read()
+    tokens = javalang.tokenizer.tokenize(java_code)
+    parser = javalang.parser.Parser(tokens)
+    return parser.parse()
 
-codigo = get_java_code()
-parseado = parse_java_code(codigo)
+def ast_to_dict(node):
+    """Convierte un AST a un diccionario."""
+    if isinstance(node, javalang.ast.Node):
+        return {
+            'type': type(node).__name__,
+            'attributes': {key: ast_to_dict(value) for key, value in node.attrs.items() if value is not None},
+            'children': [ast_to_dict(child) for child in node.children if child is not None]
+        }
+    elif isinstance(node, list):
+        return [ast_to_dict(child) for child in node]
+    else:
+        return node
 
-print(parseado)
+def save_ast(ast, output_path):
+    """Guarda un AST en formato JSON."""
+    ast_dict = ast_to_dict(ast)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        json.dump(ast_dict, file, indent=2)
+
+def preprocess_dataset(base_path, output_dir):
+    """Preprocesa el dataset convirtiendo archivos Java en ASTs y guardándolos en formato JSON."""
+    java_files = collect_java_files(base_path)
+    for java_file in java_files:
+        try:
+            ast = generate_ast(java_file)
+            relative_path = os.path.relpath(java_file, base_path)
+            output_path = os.path.join(output_dir, f"{relative_path}.json")
+            save_ast(ast, output_path)
+            print(f"Procesado: {java_file}")
+        except Exception as e:
+            print(f"Error procesando {java_file}: {e}")
+
+if __name__ == "__main__":
+    base_path = '/mnt/data/ConPlag/versions/bplag_version_1/'
+    output_dir = '/mnt/data/ConPlag/preprocessed_ast/'
+    preprocess_dataset(base_path, output_dir)
