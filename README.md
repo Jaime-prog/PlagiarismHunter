@@ -1,4 +1,4 @@
-# 🕵🏻‍♂️Plagiarism Hunter (tool for plagiarism detector)🕵🏻‍♂️
+# 🕵🏻‍♂️ Plagiarism Hunter (tool for plagiarism detector) 🕵🏻‍♂️
 
 ## Descripción del Proyecto
 
