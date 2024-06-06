@@ -1,3 +1,7 @@
-# PlagiarismHunter (tool for plagiarism detector)
+# Plagiarism Hunter (tool for plagiarism detector)
 
-Fase 1.
+## Descripción del Proyecto
+
+## Referencias
+
+## Contacto
